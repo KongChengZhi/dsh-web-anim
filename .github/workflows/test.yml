@@ -1,0 +1,69 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  # The pure suites need no browser and finish in about a second. Running them
+  # first means a broken module fails in seconds instead of masquerading as a
+  # browser problem, which is the single most common way a CI run wastes an hour.
+  unit:
+    name: unit (no browser)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: storage
+        run: node tests/storage.test.mjs
+      - name: registration
+        run: node tests/registration.test.mjs
+      - name: args
+        run: node tests/args.test.mjs
+
+  # Browser suites. Chrome is preinstalled on every GitHub-hosted runner; the
+  # plugin discovers it and launches a private headless instance with a throwaway
+  # profile, so nothing has to be configured.
+  browser:
+    name: browser (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Headless Chrome on a bare Linux runner has no GPU; without this the WebGL
+      # canvases in the fixtures come out blank and the classify suite fails for a
+      # reason that has nothing to do with the code.
+      - name: permit software WebGL (linux)
+        if: runner.os == 'Linux'
+        run: echo "DSH_WEB_ANIM_BROWSER_ARGS=--enable-unsafe-swiftshader" >> $GITHUB_ENV
+
+      - name: announce the browser
+        run: node -e "import('./lib/browser.js').then(m => console.log(JSON.stringify(m.describeBrowserEnvironment(), null, 2)))"
+
+      - name: suites
+        run: node tests/run-all.mjs
+
+      # A leak is a failure, not a warning: the whole point of this package is that
+      # it does not accumulate anything. If a profile survives the run, the teardown
+      # suite would have caught it, but this checks the machine itself.
+      - name: no leaked browser profiles (linux)
+        if: runner.os == 'Linux'
+        run: |
+          left=$(find /tmp -maxdepth 1 -type d -name 'dsh-web-anim-*' | wc -l)
+          echo "leftover profiles: $left"
+          test "$left" -eq 0

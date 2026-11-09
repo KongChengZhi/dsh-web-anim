@@ -1,0 +1,46 @@
+{
+  "name": "dsh-web-anim",
+  "version": "0.1.0",
+  "description": "Web animation debugging for DeepSeek Harness: freeze the page clock, sample a deterministic timeline into ONE citable contact sheet, and keep the artifact store under a hard budget.",
+  "type": "module",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json",
+    "./dsh-plugin.json": "./dsh-plugin.json"
+  },
+  "files": [
+    "lib/",
+    "tests/",
+    "fixtures/",
+    "cordis.patch.yml",
+    "dsh-plugin.json",
+    "README.md",
+    "INSTALL.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": ">=22",
+    "dsh": ">=0.2.1-rc.3"
+  },
+  "scripts": {
+    "test": "node tests/run-all.mjs",
+    "check": "node --check lib/index.js",
+    "selftest": "node tests/selftest.mjs"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "animation",
+    "debugging",
+    "cdp",
+    "storyboard",
+    "contact-sheet"
+  ],
+  "license": "MIT"
+}

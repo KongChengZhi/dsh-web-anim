@@ -1,0 +1,8 @@
+# Host entry for dsh-web-anim.
+#
+# Registers five tools and one short system-prompt section that tells the model
+# the artifact store exists, its budget, and when to release captures. It never
+# replaces a DSH service; it only contributes registrations.
+- insert:
+    - id: web-anim
+      name: "dsh-web-anim"

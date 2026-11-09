@@ -1,0 +1,17 @@
+# No dependencies are vendored — this package has zero npm dependencies by design.
+node_modules/
+
+# Artifact store (never committed): captures live outside the repo by default, but a
+# DSH_WEB_ANIM_DIR inside the tree would otherwise be committed.
+.captures/
+captures/
+
+# Test output
+_suite.log
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

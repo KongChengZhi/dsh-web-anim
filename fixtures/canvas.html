@@ -1,0 +1,21 @@
+<!doctype html>
+<html><head><meta charset='utf-8'><title>canvas fixture</title>
+<style>body{margin:0;background:#0b1020;color:#fff;font:13px system-ui}</style></head>
+<body>
+<canvas id='scene' width='900' height='520'></canvas>
+<script>
+  const c = document.getElementById('scene');
+  const x = c.getContext('2d');
+  function draw(now) {
+    x.fillStyle = '#0b1020'; x.fillRect(0, 0, c.width, c.height);
+    x.fillStyle = '#22d3ee';
+    x.beginPath();
+    x.arc(450 + 220 * Math.cos(now / 700), 260 + 90 * Math.sin(now / 500), 60, 0, Math.PI * 2);
+    x.fill();
+    x.fillStyle = '#f472b6';
+    x.fillRect(60, 60 + 40 * Math.sin(now / 300), 120, 24);
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+</script>
+</body></html>

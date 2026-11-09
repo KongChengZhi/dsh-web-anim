@@ -1,0 +1,41 @@
+<!doctype html>
+<html><head><meta charset='utf-8'><title>transition fixture</title>
+<style>
+  body { margin:0; background:#0b1020; color:#fff; font:14px system-ui; }
+  #stage { position:relative; width:900px; height:520px; overflow:hidden; }
+  /*
+   * A deliberately hostile combination, and an extremely common one:
+   * a class toggle driven by the page's own seek(), and a *long* transition on the
+   * properties that class changes. The transition is created at the instant the
+   * class flips, on the compositor's clock, so any screenshot taken while it runs
+   * captures "however far it got" rather than "the state at t".
+   */
+  #block {
+    position:absolute; left:60px; top:70px; width:520px; height:300px; border-radius:14px;
+    background:#1f2937; border:3px solid #1f2937;
+    transition: background-color 500ms linear, border-color 500ms linear;
+  }
+  #block.hl { background:#22c55e; border-color:#eab308; }
+  #note { position:absolute; left:60px; top:400px; font-size:13px; color:#94a3b8; }
+</style></head>
+<body><div id='stage'>
+  <div id='block'></div>
+  <div id='note'>transition fixture</div>
+</div>
+<script>
+  const block = document.getElementById('block');
+  const note = document.getElementById('note');
+
+  // The page owns a deterministic timeline: every visible property is a pure
+  // function of t. No rAF loop, no wall clock, no accumulation.
+  function render(ms) {
+    block.classList.toggle('hl', ms >= 500);
+    block.style.transform = 'translateX(' + Math.round(ms * 0.22) + 'px)';
+    note.textContent = 't=' + Math.round(ms) + 'ms';
+  }
+
+  window.__timeline = { duration: 1000 };
+  window.seekTo = (ms) => { render(ms); return ms; };
+  render(0);
+</script>
+</body></html>

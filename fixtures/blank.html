@@ -1,0 +1,32 @@
+<!doctype html>
+<!--
+  A page that never paints its canvas.
+
+  This is not a contrived case: a three.js demo whose WebGL context is refused
+  (headless without software fallback, a blocked extension, a GPU crash) looks
+  exactly like this — a full-size canvas, a live rAF loop, and nothing on it.
+
+  A capture of this page used to look perfectly healthy: no error, no missing
+  cell, every cell identical. The blank-frame check exists because "identical"
+  and "empty" are different facts and the model cannot tell them apart from
+  pixels alone.
+-->
+<html><head><meta charset='utf-8'><title>blank canvas fixture</title>
+<style>body{margin:0;background:#e8e8e8}canvas{display:block}</style></head>
+<body>
+<canvas id='scene' width='900' height='520'></canvas>
+<script>
+  const canvas = document.getElementById('scene');
+  const ctx = canvas.getContext('2d');
+  // Fill once with a flat colour and then animate nothing visible: the loop is
+  // real, the timeline is real, the picture is a rectangle.
+  ctx.fillStyle = '#e8e8e8';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  function loop(now) {
+    ctx.fillStyle = '#e8e8e8';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+</script>
+</body></html>

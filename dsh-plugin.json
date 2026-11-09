@@ -1,0 +1,29 @@
+{
+  "$schema": "https://dsh.community/schemas/dsh-plugin-0.15.json",
+  "id": "dsh-web-anim",
+  "name": "web-anim",
+  "version": "0.1.0",
+  "manifestVersion": "0.15",
+  "facets": {
+    "host": {
+      "entry": "lib/index.js",
+      "apiVersion": "v1alpha1"
+    }
+  },
+  "requires": {
+    "contracts": []
+  },
+  "permissions": [],
+  "contributes": {
+    "tools": [
+      "web_anim_probe",
+      "web_anim_capture",
+      "web_anim_zoom",
+      "web_anim_gc",
+      "web_anim_help"
+    ]
+  },
+  "subscriptions": [],
+  "license": "MIT",
+  "description": "Freeze a web page's animation clock, sample it deterministically into one citable contact sheet, and keep every artifact under a hard storage budget with proactive cleanup reminders."
+}

@@ -1,0 +1,32 @@
+<!doctype html>
+<html><head><meta charset='utf-8'><title>timeline fixture</title>
+<style>
+  body{margin:0;background:#111;color:#fff;font:14px system-ui}
+  #stage{position:relative;width:900px;height:520px;overflow:hidden}
+  .bar{position:absolute;left:40px;height:70px;border-radius:8px;background:#22c55e}
+  .bar:nth-child(1){top:60px} .bar:nth-child(2){top:170px;background:#3b82f6}
+  .bar:nth-child(3){top:280px;background:#eab308}
+</style></head>
+<body><div id='stage'>
+  <div class='bar'></div><div class='bar'></div><div class='bar'></div>
+</div>
+<script>
+  // A composition that owns its timeline: the only supported way to reach state
+  // at time t is to call the page's own seek function. Everything is a pure
+  // function of t, which is what makes this the best case for capture.
+  const bars = Array.from(document.querySelectorAll('.bar'));
+  const DURATION = 2000;
+  function render(t) {
+    const p = Math.min(1, Math.max(0, t / DURATION));
+    bars.forEach((bar, i) => {
+      const local = Math.min(1, Math.max(0, (p - i * 0.2) / 0.5));
+      const eased = local < 0.5 ? 2 * local * local : 1 - Math.pow(-2 * local + 2, 2) / 2;
+      bar.style.width = (60 + 640 * eased).toFixed(1) + 'px';
+      bar.style.opacity = String(0.25 + 0.75 * eased);
+    });
+  }
+  window.__timeline = { duration: DURATION };
+  window.seekTo = (ms) => { render(ms); return ms; };
+  render(0);
+</script>
+</body></html>

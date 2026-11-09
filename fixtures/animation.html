@@ -1,0 +1,32 @@
+<!doctype html>
+<html><head><meta charset='utf-8'><title>web-anim fixture</title>
+<style>
+  body { margin:0; background:#f4f4f4; font:14px system-ui; }
+  #card { position:absolute; top:40px; left:40px; width:180px; height:120px;
+          background:#3b82f6; border-radius:12px; opacity:0; }
+  @keyframes cardIn {
+    from { opacity:0; transform: translateY(24px) scale(0.9); }
+    to   { opacity:1; transform: translateY(0) scale(1); }
+  }
+  #card.run { animation: cardIn 600ms cubic-bezier(.2,.8,.2,1) forwards; }
+  #dot { position:absolute; top:220px; left:40px; width:24px; height:24px;
+         border-radius:50%; background:#ef4444; }
+</style></head>
+<body>
+  <div id='card'></div>
+  <div id='dot'></div>
+  <script>
+    // Deliberately deterministic: the loop derives its position from the timestamp
+    // the frame callback receives, not from its own counter. A page that accumulates
+    // (`t += 16`) is not rewindable and would make two captures differ — see
+    // web_anim_help{topic:"limits"}.
+    const card = document.getElementById('card');
+    const dot = document.getElementById('dot');
+    requestAnimationFrame(() => card.classList.add('run'));
+    function loop(now) {
+      dot.style.transform = 'translateX(' + (120 * Math.sin(now / 400)).toFixed(2) + 'px)';
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  </script>
+</body></html>
